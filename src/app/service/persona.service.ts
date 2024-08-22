@@ -1,53 +1,38 @@
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable, catchError, throwError } from 'rxjs';
-import { environment } from '../../enviroments/environment';
-import { Persona } from '../model/persona.model';
-import { map } from 'rxjs';
-import {Prestamo} from "../model/prestamo.model";
+import {environment} from "../../enviroments/environment";
+import {HttpClient, HttpHeaders} from "@angular/common/http";
+import {Materia} from "../model/materia";
+import {Observable} from "rxjs";
+import {Vehiculo} from "../model/vehiculo.model";
+import {Persona} from "../model/persona";
 
 @Injectable({
   providedIn: 'root'
 })
 export class PersonaService {
-
+  private urlEndPoint:string = environment.urlHost+'api/persona';
+  private httpHeaders = new HttpHeaders({'Content-Type':'application/json'});
   constructor(private http:HttpClient) { }
 
-  crearPersona(persona: any,id:number): Observable<any> {
-    return this.http.post<string>(`${environment.urlHost}api/persona/crear/${id}`, persona).pipe(
-      catchError(this.handleError)
-    );
-  }
-  obteenerPersonaXCedula(cedula:String): Observable<number> {
-    return this.http.get<number>(`${environment.urlHost}api/persona/cedula/${cedula}`).pipe(
-      catchError(this.handleError)
-    );
-  }
-  getPersonas(): Observable<Persona[]> {
-
-    return this.http.get(`${environment.urlHost}api/persona`).pipe(
-      map(Response => Response as Persona[])
-
-    );
-  }
-  editPersona(id:any,persona:Persona):Observable<any>{
-    return this.http.put<Persona>(`${environment.urlHost}api/persona/${id}`,persona)
+  crear(persona: PersonaService): Observable<Persona>{
+    return this.http.post<Persona>(this.urlEndPoint, persona,{headers: this.httpHeaders})
   }
 
-  deletePersona(id: any):Observable<any>{
-    return this.http.delete<Persona>(`${environment.urlHost}api/persona/${id}`)
+  listar(): Observable<Persona[]>{
+    return this.http.get<Persona[]>(this.urlEndPoint);
   }
 
-  private handleError(error: HttpErrorResponse) {
-    let errorMessage = 'Error desconocido';
-    if (error.error instanceof ErrorEvent) {
-      // Error del lado del cliente
-      errorMessage = `Error: ${error.error.message}`;
-    } else {
-      // El servidor retornó un código de error
-      errorMessage = `Código de error: ${error.status}, mensaje: ${error.message}`;
-    }
-    console.error(errorMessage);
-    return throwError(errorMessage);
+
+  buscarporid(id: number):Observable<Persona>{
+    return this.http.get<Persona>(`${this.urlEndPoint}/${id}`);
+  }
+
+  editar(persona: Persona): Observable<Materia> {
+    const id = `${this.urlEndPoint}/${persona.id}`;
+    return this.http.put<Persona>(id, persona, { headers: this.httpHeaders});
+  }
+
+  eliminar(id: number): Observable<Persona>{
+    return this.http.delete<Persona>(`${this.urlEndPoint}/${id}`)
   }
 }

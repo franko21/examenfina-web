@@ -39,7 +39,7 @@ import {ToastSampleIconComponent} from "../../notifications/toasters/toast-simpl
     styleUrls: ['./login.component.scss'],
     standalone: true,
     imports: [ContainerComponent, RowComponent, ColComponent, CardGroupComponent, TextColorDirective, CardComponent, CardBodyComponent, FormDirective, InputGroupComponent, InputGroupTextDirective, IconDirective, FormControlDirective, ButtonDirective, NgStyle, ReactiveFormsModule, HttpClientModule, NgIf,ToasterComponent, ToastComponent, ToastHeaderComponent, ToastBodyComponent, ProgressBarDirective, ProgressComponent, ProgressBarComponent, ButtonDirective],
-    providers: [LoginService]
+    providers: [LoginService,Router]
 })
 export class LoginComponent {
   position = 'middle-center';
@@ -75,30 +75,50 @@ export class LoginComponent {
     const formValues = this.loginForm.value;
     const loginRequest = formValues as LoginRequest;
     if(this.loginForm.valid) {
-      this.loginService.login(loginRequest).subscribe({
-      next: (userData) => {
-          if (userData==null){
-            this.toggleToast();
-
+      this.loginService.getLogin(formValues.username, formValues.password).subscribe({
+        next: (isLoggedIn: boolean) => {
+          if (isLoggedIn) {
+            this.router.navigate(['/marca']);
+            sessionStorage.setItem("token", "aasa");
+          } else {
+            this.toggleToast();  // Muestra un mensaje de error
           }
-      },
-      error: (errorData) => {
+        },
+        error: (errorData) => {
           console.error('Error al iniciar sesión:', errorData);
-          this.toggleToast();
-      },
-      complete: () => {
-          this.loginForm.reset();
+          this.toggleToast();  // Muestra un mensaje de error en caso de fallo de la solicitud
+        },
+        complete: () => {
+          this.loginForm.reset();  // Resetea el formulario después de completar la solicitud
+        }
+      });
+
+
+    }else{
+        this.markFormGroupTouched(this.loginForm);
+
       }
-  });}else{
-      this.markFormGroupTouched(this.loginForm);
-
+      //     this.loginService.login(loginRequest).subscribe({
+      //     next: (userData) => {
+      //         if (userData==null){
+      //           this.toggleToast();
+      //
+      //         }
+      //     },
+      //     error: (errorData) => {
+      //         console.error('Error al iniciar sesión:', errorData);
+      //         this.toggleToast();
+      //     },
+      //     complete: () => {
+      //         this.loginForm.reset();
+      //     }
+      // });}else{
+      //     this.markFormGroupTouched(this.loginForm);
+      //
+      //   }
     }
-  }
-  register(){
-    this.router.navigate(['/register']);
-
-  }
-  markFormGroupTouched(formGroup: FormGroup) {
+  markFormGroupTouched(formGroup: FormGroup)
+  {
     (Object as any).values(formGroup.controls).forEach((control: AbstractControl) => {
       control.markAsTouched();
 
@@ -107,5 +127,9 @@ export class LoginComponent {
       }
     });
   }
+  }
+  // register(){
+  //   this.router.navigate(['/register']);
+  //
+  // }
 
-}

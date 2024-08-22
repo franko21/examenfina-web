@@ -1,0 +1,24 @@
+<div class="container">
+  <div class="form-container">
+    <form [formGroup]="materiaForm" (ngSubmit)="onSubmit()">
+      <h2>{{ isEditing ? 'Editar Materia' : 'Crear Materia' }}</h2>
+      <div class="form-group">
+        <label for="nombre">Nombre de la Materia:</label>
+        <input id="nombre" formControlName="nombre" type="text" placeholder="Nombre de la Materia" required>
+      </div>
+      <button type="submit" class="btn-submit">{{ isEditing ? 'Actualizar Materia' : 'Crear Materia' }}</button>
+    </form>
+  </div>
+
+  <div class="list-container">
+    <h2>Lista de Materias</h2>
+    <div *ngFor="let materia of materias" class="materia-item">
+      <p><strong>Nombre:</strong> {{ materia.nombre }}</p>
+      <div class="btn-group">
+        <button (click)="editMateria(materia)" class="btn-edit">Editar</button>
+        <button (click)="deleteMateria(materia.id)" class="btn-delete">Eliminar</button>
+      </div>
+    </div>
+  </div>
+</div>
+

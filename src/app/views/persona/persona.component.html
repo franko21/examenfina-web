@@ -1,0 +1,38 @@
+<div class="container">
+  <div class="form-container">
+    <form [formGroup]="personaForm" (ngSubmit)="onSubmit()">
+      <h2>{{ isEditing ? 'Editar Persona' : 'Crear Persona' }}</h2>
+      <div class="form-group">
+        <label for="cedula">Cédula:</label>
+        <input id="cedula" formControlName="cedula" type="text" placeholder="Cédula" required>
+      </div>
+      <div class="form-group">
+        <label for="nombre">Nombre:</label>
+        <input id="nombre" formControlName="nombre" type="text" placeholder="Nombre" required>
+      </div>
+      <div class="form-group">
+        <label for="apellido">Apellido:</label>
+        <input id="apellido" formControlName="apellido" type="text" placeholder="Apellido" required>
+      </div>
+      <div class="form-group">
+        <label for="ubicacion">Ubicación:</label>
+        <input id="ubicacion" formControlName="ubicacion" type="text" placeholder="Ubicación" required>
+      </div>
+      <button type="submit" class="btn-submit">{{ isEditing ? 'Actualizar Persona' : 'Crear Persona' }}</button>
+    </form>
+  </div>
+
+  <div class="list-container">
+    <h2>Lista de Personas</h2>
+    <div *ngFor="let persona of personas" class="persona-item">
+      <p><strong>Cédula:</strong> {{ persona.cedula }}</p>
+      <p><strong>Nombre:</strong> {{ persona.nombre }}</p>
+      <p><strong>Apellido:</strong> {{ persona.apellido }}</p>
+      <p><strong>Ubicación:</strong> {{ persona.ubicacion }}</p>
+      <div class="btn-group">
+        <button (click)="editPersona(persona)" class="btn-edit">Editar</button>
+        <button (click)="deletePersona(persona.id)" class="btn-delete">Eliminar</button>
+      </div>
+    </div>
+  </div>
+</div>
